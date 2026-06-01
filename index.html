@@ -447,16 +447,10 @@ footer{background:var(--navy);padding:60px 40px 36px;}
     <div class="contact-form-wrap">
       <!-- Netlify form: the name, netlify, and hidden bot-field attributes enable Netlify Forms -->
       <form
-        name="contact"
+        action="https://formspree.io/f/xredwnwg"
         method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
         onsubmit="handleSubmit(event)"
       >
-        <!-- Hidden field required by Netlify -->
-        <input type="hidden" name="form-name" value="contact">
-        <!-- Honeypot spam field — hidden from real users -->
-        <p style="display:none;"><label>Do not fill this out: <input name="bot-field"></label></p>
 
         <div class="form-row" style="margin-bottom:20px;">
           <div class="form-group" style="margin:0;"><label class="form-label" for="name">Name</label><input id="name" name="name" type="text" class="form-input" placeholder="Your name" required></div>
