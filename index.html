@@ -445,7 +445,6 @@ footer{background:var(--navy);padding:60px 40px 36px;}
       </div>
     </div>
     <div class="contact-form-wrap">
-      <!-- Netlify form: the name, netlify, and hidden bot-field attributes enable Netlify Forms -->
       <form
         action="https://formspree.io/f/xredwnwg"
         method="POST"
@@ -558,10 +557,14 @@ function handleSubmit(e){
   e.preventDefault();
   const form=e.target;
   const data=new FormData(form);
-  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()})
-    .then(()=>{
-      form.style.display='none';
-      document.getElementById('form-success').style.display='block';
+  fetch('https://formspree.io/f/xredwnwg',{method:'POST',headers:{'Accept':'application/json'},body:data})
+    .then(res=>{
+      if(res.ok){
+        form.style.display='none';
+        document.getElementById('form-success').style.display='block';
+      } else {
+        alert('Something went wrong. Please email us directly at hello@fullylaunched.com');
+      }
     })
     .catch(()=>{
       alert('Something went wrong. Please email us directly at hello@fullylaunched.com');
