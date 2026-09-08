@@ -76,50 +76,7 @@ a:hover { color: var(--color-tan); }
   padding: 0 1.5rem;
 }
 
-main {
-  padding: 3rem 1.5rem;
-  max-width: var(--container-width);
-  margin: 0 auto;
-}
-
-/* Header */
-.site-header {
-  background: var(--color-navy);
-  color: var(--color-white);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-}
-
-.site-header .logo {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 1.25rem;
-  color: var(--color-white);
-  letter-spacing: 0.02em;
-}
-
-.site-header .logo:hover { color: var(--color-tan); }
-
-.site-nav {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
-
-.site-nav a {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--color-white);
-}
-
-.site-nav a:hover { color: var(--color-tan); }
+main { display: block; }
 
 /* CTA button */
 .mail-cta {
@@ -168,3 +125,244 @@ main {
 }
 
 .site-footer a:hover { color: var(--color-white); }
+
+/* ==========================================================================
+   Site chrome — floating logo + planet-panel nav, adapted from the SpaceEdu
+   spec (docs/spaceedu-spec.txt). Fixed over every page; the only site nav.
+   ========================================================================== */
+
+.site-chrome {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  pointer-events: none;
+}
+
+.fl-logo {
+  align-self: flex-start;
+  pointer-events: auto;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  color: var(--color-white);
+  background: rgba(18, 32, 58, .5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+}
+
+.fl-logo:hover { color: var(--color-white); }
+.fl-logo-accent { color: var(--color-tan-light); }
+
+.planet-panel {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(18, 32, 58, .5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 1.1rem 0.85rem;
+}
+
+.planet-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgba(255, 255, 255, .7);
+  font-family: var(--font-mono);
+}
+
+.planet-thumb-media {
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.planet-thumb-media img { width: 78%; height: 78%; object-fit: contain; }
+
+.planet-thumb-sphere { position: relative; overflow: visible; }
+.planet-thumb-sphere::before { content: ''; width: 70%; height: 70%; border-radius: 50%; box-shadow: none; }
+.planet-thumb-sphere.sphere-saturn::before { background: radial-gradient(circle at 35% 30%, var(--color-tan-light), var(--color-tan) 60%, var(--color-navy-mid) 100%); }
+.planet-thumb-sphere.sphere-pluto::before { background: radial-gradient(circle at 35% 30%, var(--color-border), var(--color-navy-mid) 65%, var(--color-navy) 100%); }
+
+.planet-thumb-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.planet-thumb:hover .planet-thumb-media,
+.planet-thumb:focus-visible .planet-thumb-media {
+  border-color: var(--color-tan-light);
+  transform: scale(1.06);
+}
+
+.planet-thumb.is-active .planet-thumb-media {
+  border-color: var(--color-tan);
+  box-shadow: 0 0 0 3px rgba(196, 168, 130, .25);
+}
+
+.planet-thumb.is-active { color: var(--color-tan-light); }
+
+@media (max-width: 640px) {
+  .fl-logo { font-size: 1rem; padding: 0.5rem 0.9rem; }
+  .planet-thumb-media { width: 3rem; height: 3rem; }
+  .planet-panel { gap: 0.7rem; padding: 0.85rem 0.6rem; }
+}
+
+/* ==========================================================================
+   Home hero — full-bleed fixed video stage behind everything, adapted from
+   the SpaceEdu spec (docs/spaceedu-spec.txt). Home page only.
+   ========================================================================== */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--color-navy);
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 500ms linear;
+}
+
+.hero-video.is-active { opacity: 1; }
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(100deg, rgba(18, 32, 58, .62) 0%, rgba(18, 32, 58, .18) 45%, rgba(18, 32, 58, .5) 100%),
+    linear-gradient(0deg, rgba(18, 32, 58, .55) 0%, rgba(18, 32, 58, 0) 35%);
+}
+
+.hero-copy-wrap {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem clamp(1.5rem, 5vw, 5rem);
+  color: var(--color-white);
+}
+
+.hero-copy { max-width: 42rem; }
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-tan-light);
+  margin: 0 0 0.75rem;
+}
+
+.hero-title {
+  color: var(--color-white);
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  text-shadow: 0 4px 24px rgba(18, 32, 58, .5);
+  margin: 0 0 1.25rem;
+}
+
+.hero-rule {
+  width: 4rem;
+  height: 2px;
+  background: var(--color-tan);
+  margin: 0 0 1.25rem;
+}
+
+.hero-lede {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .88);
+  max-width: 42ch;
+  margin: 0 0 1.75rem;
+}
+
+.hero-cta { font-size: 0.85rem !important; padding: 0.85rem 1.75rem; }
+
+/* -- scroll indicator -- */
+.hero-scroll {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 1.75rem;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, .7);
+  width: 1.5rem;
+  animation: heroScrollBounce 2.2s ease-in-out infinite;
+}
+
+.hero-scroll:hover { color: var(--color-white); }
+.hero-scroll svg { width: 100%; height: auto; }
+
+@keyframes heroScrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* -- entrance animation -- */
+@keyframes heroEnter {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ent {
+  animation: heroEnter .7s cubic-bezier(.16, .8, .24, 1) both;
+  animation-delay: calc(var(--ent-delay, 0) * 110ms + 150ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ent { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .hero-scroll { animation: none !important; }
+}
+
+@media (max-width: 640px) {
+  .hero-title { font-size: clamp(2.25rem, 11vw, 3rem); }
+  .hero-lede { font-size: 0.95rem; }
+  .hero-copy-wrap { padding: 6rem 1.25rem 3rem; }
+}
+
+/* -- sub-page placeholder hero (until each branch gets its own footage) -- */
+.page-hero-placeholder {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 20%, var(--color-navy-mid), var(--color-navy) 70%);
+}
+
+.page-hero-placeholder h1 {
+  color: var(--color-white);
+  text-align: center;
+}

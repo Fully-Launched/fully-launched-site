@@ -1,0 +1,40 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Libre+Baskerville:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+<div class="site-chrome">
+  <a href="/" class="fl-logo" aria-label="Fully Launched — Home">
+    <span class="fl-logo-word">Fully<span class="fl-logo-accent">Launched</span></span>
+  </a>
+  <nav class="planet-panel" aria-label="Choose a branch">
+    <a class="planet-thumb" href="/" data-planet="earth">
+      <span class="planet-thumb-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202005_3346cc4d-ec3b-44ab-825c-b18e49f5021a.png" alt=""></span>
+      <span class="planet-thumb-label">Earth</span>
+    </a>
+    <a class="planet-thumb" href="/media/" data-planet="saturn">
+      <span class="planet-thumb-media planet-thumb-sphere sphere-saturn"></span>
+      <span class="planet-thumb-label">Saturn</span>
+    </a>
+    <a class="planet-thumb" href="/websites/" data-planet="mars">
+      <span class="planet-thumb-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202018_3d559490-f613-4ed7-a3bb-3b7e9fc90fb8.png" alt=""></span>
+      <span class="planet-thumb-label">Mars</span>
+    </a>
+    <a class="planet-thumb" href="/ecommerce/" data-planet="venus">
+      <span class="planet-thumb-media"><img src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202012_640b239a-d08a-4200-adb2-741bbe129ac8.png" alt=""></span>
+      <span class="planet-thumb-label">Venus</span>
+    </a>
+    <a class="planet-thumb" href="/ai/" data-planet="pluto">
+      <span class="planet-thumb-media planet-thumb-sphere sphere-pluto"></span>
+      <span class="planet-thumb-label">Pluto</span>
+    </a>
+  </nav>
+</div>
+<script>
+(function () {
+  var ROUTE_PLANET = { '/': 'earth', '/media/': 'saturn', '/websites/': 'mars', '/ecommerce/': 'venus', '/ai/': 'pluto' };
+  var path = location.pathname.replace(/index\.html$/, '');
+  var planet = ROUTE_PLANET[path] || 'earth';
+  var link = document.querySelector('.planet-thumb[data-planet="' + planet + '"]');
+  if (link) { link.classList.add('is-active'); link.setAttribute('aria-current', 'page'); }
+})();
+</script>
