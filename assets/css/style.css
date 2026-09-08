@@ -1,0 +1,170 @@
+/* Fully Launched — base design system.
+   Colors/fonts live here as custom properties so the palette swaps from
+   one place. No page-specific styling belongs in this file. */
+
+:root {
+  --color-navy: #1B2B4B;
+  --color-navy-mid: #2E4380;
+  --color-tan: #C4A882;
+  --color-tan-light: #D4BC9A;
+  --color-white: #FFFFFF;
+  --color-cream: #F8F7F4;
+  --color-surface: #F0EDE8;
+  --color-ink: #1B2B4B;
+  --color-muted: #7A6E5F;
+  --color-placeholder: #9A8E7E;
+  --color-border: #D8D2C6;
+
+  --font-heading: 'Jost', sans-serif;
+  --font-body: 'Libre Baskerville', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --container-width: 1200px;
+}
+
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+img, video { max-width: 100%; display: block; }
+
+body {
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  color: var(--color-navy);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+h1 { font-size: clamp(2rem, 4vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); }
+h3 { font-size: 1.25rem; }
+
+p {
+  margin: 0 0 1rem;
+  max-width: 65ch;
+}
+
+a {
+  color: var(--color-navy);
+  text-decoration: none;
+}
+
+a:hover { color: var(--color-tan); }
+
+.eyebrow, label, .label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Layout */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+main {
+  padding: 3rem 1.5rem;
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+/* Header */
+.site-header {
+  background: var(--color-navy);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.site-header .logo {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--color-white);
+  letter-spacing: 0.02em;
+}
+
+.site-header .logo:hover { color: var(--color-tan); }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.site-nav a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.site-nav a:hover { color: var(--color-tan); }
+
+/* CTA button */
+.mail-cta {
+  font-family: var(--font-mono) !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--color-tan);
+  color: var(--color-navy-mid) !important;
+  padding: 0.6rem 1.25rem;
+  border-radius: 999px;
+  display: inline-block;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.mail-cta:hover {
+  background: var(--color-tan-light);
+  color: var(--color-navy-mid) !important;
+}
+
+/* Custom integrations section (home page) */
+.custom-integrations {
+  border-left: 3px solid var(--color-tan);
+  padding: 0.25rem 0 0.25rem 1.5rem;
+  margin: 3rem 0;
+}
+
+.custom-integrations .mail-cta {
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+.site-footer {
+  background: var(--color-navy-mid);
+  color: var(--color-tan-light);
+  text-align: center;
+  padding: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
+.site-footer a {
+  color: var(--color-tan-light);
+}
+
+.site-footer a:hover { color: var(--color-white); }
