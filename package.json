@@ -1,7 +1,0 @@
-{
-  "name": "fully-launched-site",
-  "private": true,
-  "scripts": {
-    "build": "node build.js"
-  }
-}
