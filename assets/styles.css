@@ -1,0 +1,390 @@
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0 }
+
+:root{
+  --gutter:25;
+  --u:max(min(.72px, calc(100vh / 700)), min(calc(100vw / 1353), calc(100vh / 1163)));
+  --dh-px:calc(1163 * var(--u));
+  --vshift:calc(max(0px, (100vh - var(--dh-px))) * .42);
+  --ink:#ffffff; --cyan:#C4AB82;
+  --btn-ink:#071227;
+  --font-serif:'Prata', Georgia, serif;
+  --font-body:'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-logo:'Poppins', sans-serif;
+  --nav-h:76px;
+}
+@media (max-width:640px){ :root{ --nav-h:64px; } }
+@supports (height:100dvh){
+  :root{
+    --u:max(min(.72px, calc(100dvh / 700)), min(calc(100vw / 1353), calc(100dvh / 1163)));
+    --vshift:calc(max(0px, (100dvh - var(--dh-px))) * .42);
+  }
+}
+html{height:100%; scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+body{margin:0; min-height:100%; overflow-x:hidden; background:#04101f; color:var(--ink); font-family:var(--font-body);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:geometricPrecision}
+
+/* ============ HERO STAGE ============ */
+.stage{position:relative; width:100%; height:100vh; overflow:hidden; isolation:isolate}
+@supports (height:100dvh){ .stage{height:100dvh} }
+.sky{position:absolute; inset:0; z-index:0}
+.sky::before{content:""; position:absolute; inset:0; z-index:0;
+  background-image:var(--sky-bg, none); background-size:cover; background-position:center;
+  background-repeat:no-repeat}
+/* Venus's still/poster render has its shadow on the wrong side — mirror just this layer */
+body[data-planet="venus"] .sky::before{transform:scaleX(-1)}
+.sky video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  display:block; opacity:0; transition:opacity .22s linear; z-index:1}
+.sky video.is-active{opacity:1}
+@media (prefers-reduced-motion:reduce){ .sky video{display:none} }
+
+.ui{position:absolute; inset:0; z-index:3}
+
+/* LAYOUT */
+.copy{position:absolute; inset:0; transform:translateY(var(--vshift)); pointer-events:none}
+.copy a{pointer-events:auto}
+.col{position:absolute; left:0; right:calc(var(--gutter) * var(--u)); text-align:center}
+
+/* HERO COPY */
+.eyebrow{top:calc(188.8 * var(--u)); font-size:calc(30.45 * var(--u)); font-weight:500;
+  line-height:1; letter-spacing:calc(4 * var(--u)); text-indent:calc(4 * var(--u)); color:#fff}
+h1.title{top:calc(268 * var(--u)); font-family:var(--font-serif); font-weight:400;
+  font-size:calc(112.4 * var(--u) * var(--title-scale, 1)); line-height:1; letter-spacing:calc(2 * var(--u));
+  text-indent:calc(2 * var(--u)); color:#fff}
+h1.title .ent-line{display:inline-block}
+/* Home only: the 268u title offset is sized to clear the 70u-tall eyebrow
+   logo-mark that every OTHER branch shows above it (188.8u eyebrow top +
+   70u logo height + ~9u breathing room ≈ 268u — already tight, confirmed
+   by that math, so it's untouched for those branches). Home's eyebrow is
+   left empty (its logo lives in the title slot instead — see index.html),
+   so that whole 268u-188.8u=79.2u is dead space with nothing in it. Pull
+   Home's title up to roughly the same ~11u gap the other branches already
+   have after their eyebrow content, instead of the ~79u gap it had before. */
+body[data-planet="earth"] h1.title{top:calc(200 * var(--u))}
+
+.rule{top:calc(405.5 * var(--u)); height:calc(5 * var(--u)); font-size:0; line-height:0;
+  padding-right:calc(2 * var(--u))}
+.rule span{display:inline-block; vertical-align:top; width:calc(100 * var(--u));
+  height:100%; border-radius:calc(2.5 * var(--u)); background:var(--cyan)}
+p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:400;
+  line-height:calc(38 * var(--u)); color:rgba(255,255,255,.95)}
+
+/* CTA ROW */
+.cta{top:calc(597 * var(--u)); height:calc(66 * var(--u)); isolation:isolate}
+.cta a{display:inline-flex; align-items:center; justify-content:center;
+  width:calc(216 * var(--u)); height:calc(66 * var(--u)); border-radius:calc(33 * var(--u));
+  font-size:calc(17 * var(--u)); font-weight:700; letter-spacing:0; text-indent:0;
+  line-height:1; color:var(--btn-ink); text-decoration:none; padding-top:calc(2 * var(--u));
+  background:linear-gradient(180deg,#ffffff 0%,#d6e8f8 4%,#d9ecfe 72%,#ffffff 100%);
+  box-shadow:0 calc(10 * var(--u)) calc(18 * var(--u)) calc(-8 * var(--u)) rgba(255,255,255,.50),
+             0 0 calc(26 * var(--u)) rgba(255,255,255,.18),
+             inset 0 0 0 calc(2 * var(--u)) rgba(255,255,255,.9)}
+/* FOCUS */
+.cta a:focus-visible{
+  outline:2px solid var(--cyan); outline-offset:3px}
+
+/* ============ HERO RESPONSIVE ============ */
+
+/* TABLET */
+@media (min-width:580px) and (max-width:1030px) and (min-height:621px){
+  :root{--gutter:0;
+    --u:min(max(min(.85px, calc(100vh / 780)), min(calc(100vw / 900), calc(100vh / 1163))), 1.15px);
+    --dh-px:calc(1120 * var(--u));
+    --vshift:calc(max(0px, (100vh - var(--dh-px))) * .38)}
+  @supports (height:100dvh){
+    :root{--gutter:0;
+      --u:min(max(min(.85px, calc(100dvh / 780)), min(calc(100vw / 900), calc(100dvh / 1163))), 1.15px);
+      --dh-px:calc(1120 * var(--u));
+      --vshift:calc(max(0px, (100dvh - var(--dh-px))) * .38)}
+  }
+  p.lede br{display:none}
+  p.lede{max-width:calc(620 * var(--u)); margin-left:auto; margin-right:auto; text-wrap:pretty}
+}
+
+/* Above the tablet block but still under the orbit-nav's panel-switch
+   breakpoint (max-width:1250px): p.lede has no max-width in the default
+   (>1030px) rule below, so long-copy branches (e.g. Cortex, Venus) can
+   render an unwrapped line wide enough to reach under the orbit-nav even
+   though the vertical panel hasn't appeared yet at these widths. Same cap
+   the tablet block already uses, just carried through this gap. */
+@media (min-width:1031px) and (max-width:1250px){
+  p.lede br{display:none}
+  p.lede{max-width:calc(620 * var(--u)); margin-left:auto; margin-right:auto; text-wrap:pretty}
+}
+
+/* PHONE */
+@media (max-width:579px), (max-height:620px){
+  :root{--gutter:0;
+    --u:max(min(.92px, calc(100vh / 620)), min(calc(100vw / 430), calc(100vh / 880)));
+    --dh-px:calc(880 * var(--u));
+    --vshift:calc(max(0px, (100vh - var(--dh-px))) * .34)}
+  @supports (height:100dvh){
+    :root{--gutter:0;
+      --u:max(min(.92px, calc(100dvh / 620)), min(calc(100vw / 430), calc(100dvh / 880)));
+      --dh-px:calc(880 * var(--u));
+      --vshift:calc(max(0px, (100dvh - var(--dh-px))) * .34)}
+  }
+  .copy{top:calc(76 * var(--u)); display:flex; flex-direction:column; align-items:center;
+    padding:calc(56 * var(--u)) calc(26 * var(--u)) 0}
+  .col{position:static; width:100%; right:auto}
+  .eyebrow{font-size:calc(20 * var(--u)); letter-spacing:calc(5 * var(--u)); text-indent:calc(5 * var(--u))}
+  h1.title{font-size:calc(86 * var(--u) * var(--title-scale, 1)); margin-top:calc(15 * var(--u))}
+  .rule{margin-top:calc(20 * var(--u)); height:calc(5 * var(--u)); padding-right:0}
+  .rule span{width:calc(84 * var(--u))}
+  p.lede{margin-top:calc(19 * var(--u)); font-size:calc(20 * var(--u));
+    line-height:calc(32 * var(--u)); max-width:calc(400 * var(--u)); text-wrap:balance}
+  p.lede br{display:none}
+  .cta{top:auto; margin-top:calc(32 * var(--u)); height:calc(60 * var(--u)); position:relative}
+  .cta a{width:calc(190 * var(--u)); height:calc(60 * var(--u)); border-radius:calc(30 * var(--u))}
+}
+
+/* SHORT */
+@media (max-height:620px){
+  :root{--u:max(min(.85px, calc(100vh / 470)), min(calc(100vw / 640), calc(100vh / 560)));
+    --dh-px:calc(560 * var(--u)); --vshift:0px}
+  .copy{padding-top:calc(26 * var(--u))}
+  h1.title{font-size:calc(64 * var(--u) * var(--title-scale, 1)); margin-top:calc(8 * var(--u))}
+  .rule{margin-top:calc(12 * var(--u))}
+  p.lede{margin-top:calc(12 * var(--u))}
+  .cta{margin-top:calc(20 * var(--u))}
+}
+@media (min-width:821px) and (max-height:660px){ .copy{transform:none} }
+
+/* ============ SHARED SECTION STYLES ============ */
+.wrap2{max-width:1180px; margin:0 auto; padding:0 clamp(20px,4vw,48px)}
+.eyebrow2{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan);
+  display:flex; align-items:center; gap:10px; margin-bottom:16px; font-weight:600}
+.eyebrow2::before{content:""; width:24px; height:1px; background:currentColor}
+.section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+  flex-wrap:wrap; margin-bottom:44px}
+.section-head .num{font-size:13px; letter-spacing:.08em; text-transform:uppercase;
+  color:rgba(255,255,255,.5); font-weight:600}
+.section-head h2{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
+  font-size:clamp(26px,4vw,42px); margin-top:8px; line-height:1.08}
+.btn-ghost{display:inline-block; font-size:13px; text-transform:uppercase; letter-spacing:.05em;
+  font-weight:600; padding:12px 20px; border:1px solid rgba(255,255,255,.3); color:#fff;
+  text-decoration:none; background:none; cursor:pointer}
+.btn-ghost:hover{border-color:#fff}
+.chip-row{display:flex; gap:10px; flex-wrap:wrap; margin:22px 0 0}
+.chip{font-size:12px; text-transform:uppercase; letter-spacing:.05em;
+  border:1px solid rgba(255,255,255,.25); padding:8px 14px; color:rgba(255,255,255,.75)}
+.note-row{margin-top:40px; padding-top:28px; border-top:1px solid rgba(255,255,255,.1);
+  display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center}
+.note-row p{max-width:560px; font-size:14px; line-height:1.6; color:rgba(255,255,255,.65); margin:0}
+
+/* ============ DETAIL SECTIONS ============ */
+.detail{padding:96px 0; border-bottom:1px solid rgba(255,255,255,.08); scroll-margin-top:var(--nav-h)}
+.detail.alt{background:#0a1830}
+.detail-hero p.lede2{font-size:16px; line-height:1.6; color:rgba(255,255,255,.75); max-width:680px;
+  margin-bottom:48px}
+
+/* marketplace service cards */
+.svc-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px}
+@media (max-width:860px){ .svc-grid{grid-template-columns:1fr} }
+.svc-card{border:1px solid rgba(255,255,255,.12); padding:26px 24px; background:rgba(255,255,255,.02)}
+.svc-card .idx{display:block; font-size:12px; color:var(--cyan); margin-bottom:10px;
+  font-weight:600; letter-spacing:.03em}
+.svc-card h3{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
+  font-size:21px; margin:0 0 12px}
+.svc-card p{font-size:14.5px; line-height:1.55; color:rgba(255,255,255,.75); margin:0 0 14px}
+.svc-card ul{margin:0; padding-left:18px; font-size:13.5px; line-height:1.7; color:rgba(255,255,255,.78)}
+
+.included{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.12); margin-top:32px}
+@media (max-width:860px){ .included{grid-template-columns:1fr 1fr} }
+.included div{background:#0a1830; padding:16px 18px}
+.included .k{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--cyan); margin-bottom:6px; font-weight:600}
+.included .v{font-size:13px; line-height:1.4; color:rgba(255,255,255,.75)}
+
+.steps{display:grid; grid-template-columns:repeat(6,1fr); border-top:1px solid rgba(255,255,255,.1);
+  margin-top:48px}
+@media (max-width:900px){ .steps{grid-template-columns:repeat(2,1fr)} }
+.step{padding:20px 18px; border-right:1px solid rgba(255,255,255,.1); border-bottom:1px solid rgba(255,255,255,.1)}
+.step .n{font-size:12px; color:var(--cyan); font-weight:600}
+.step h4{font-family:var(--font-serif); font-weight:400; text-transform:uppercase; font-size:16px; margin:8px 0 8px}
+.step p{font-size:12.5px; line-height:1.5; color:rgba(255,255,255,.6); margin:0}
+
+.commit-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px; margin-top:48px}
+@media (max-width:760px){ .commit-grid{grid-template-columns:1fr} }
+.commit{border-left:2px solid var(--cyan); padding-left:18px}
+.commit .n{font-size:12px; color:var(--cyan); font-weight:600}
+.commit h4{font-size:18px; margin:6px 0 8px; font-weight:600}
+.commit p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.65); margin:0}
+
+.quote-block{margin-top:56px; padding-top:40px; border-top:1px solid rgba(255,255,255,.1)}
+.quote-block p.quote{font-family:var(--font-serif); font-weight:400; font-size:clamp(20px,3vw,30px);
+  line-height:1.35; max-width:800px; margin:0 0 18px}
+.quote-attr{font-size:13px; color:rgba(255,255,255,.55)}
+
+.sub-block{margin-top:80px; padding-top:56px; border-top:1px solid rgba(255,255,255,.1)}
+
+/* ============ ABOUT ============ */
+.about-hero{padding:calc(var(--nav-h) + 74px) 0 60px; scroll-margin-top:var(--nav-h)}
+.about-hero h1{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
+  font-size:clamp(34px,6vw,60px); margin:0 0 20px; line-height:1.04}
+.about-hero h1 em{font-style:normal; color:var(--cyan)}
+.about-hero p{font-size:16px; line-height:1.6; color:rgba(255,255,255,.75); max-width:720px}
+.team{padding:10px 0 100px}
+.team-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:8px}
+@media (max-width:980px){ .team-grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:600px){ .team-grid{grid-template-columns:1fr} }
+.team-card2{background:#0d1f3a; border:1px solid rgba(255,255,255,.1)}
+.team-photo2{position:relative; width:100%; aspect-ratio:4/5; overflow:hidden}
+.team-photo2 img{width:100%; height:100%; object-fit:cover; display:block}
+.team-photo2::after{content:""; position:absolute; left:0; right:0; bottom:0; height:46%;
+  background:linear-gradient(to top, rgba(4,16,31,.92), rgba(4,16,31,0))}
+.role-tag2{position:absolute; left:16px; bottom:14px; z-index:2; font-size:11px;
+  text-transform:uppercase; letter-spacing:.06em; color:var(--cyan); font-weight:600}
+.team-body2{padding:20px 20px 24px}
+.team-body2 h3{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
+  font-size:20px; margin:0 0 12px}
+.team-body2 p{font-size:13px; line-height:1.6; color:rgba(255,255,255,.7); margin:0 0 12px}
+.team-body2 p:last-child{margin-bottom:0}
+
+/* ============ CONTACT / FOOTER ============ */
+.contact{padding:100px 0 56px; text-align:center; background:#04101f;
+  border-top:1px solid rgba(255,255,255,.08); scroll-margin-top:var(--nav-h)}
+.contact .eyebrow2{justify-content:center}
+.contact h2{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
+  font-size:clamp(28px,5vw,48px); margin:0 0 18px}
+.contact p{color:rgba(255,255,255,.7); max-width:520px; margin:0 auto 28px; font-size:15px; line-height:1.6}
+.mail-cta{display:inline-flex; align-items:center; justify-content:center; padding:16px 30px;
+  border-radius:33px; font-size:15px; font-weight:700; color:var(--btn-ink); text-decoration:none;
+  background:linear-gradient(180deg,#ffffff 0%,#d6e8f8 4%,#d9ecfe 72%,#ffffff 100%);
+  box-shadow:0 10px 18px -8px rgba(255,255,255,.5), 0 0 26px rgba(255,255,255,.18),
+             inset 0 0 0 2px rgba(255,255,255,.9)}
+.foot-meta{margin-top:48px; padding-top:28px; border-top:1px solid rgba(255,255,255,.08);
+  display:flex; flex-direction:column; align-items:center; gap:14px}
+.foot-row{display:flex; justify-content:center; flex-wrap:wrap; gap:10px 28px; font-size:12.5px;
+  color:rgba(255,255,255,.45)}
+.foot-links a, .foot-social a{color:inherit; text-decoration:none}
+.foot-links a:hover, .foot-social a:hover{color:rgba(255,255,255,.8); text-decoration:underline}
+
+/* ============ ENTRANCE ANIMATION ============ */
+@keyframes ent-reveal{from{transform:translateY(115%)}to{transform:translateY(0)}}
+@keyframes ent-rise{from{opacity:0;transform:translateY(var(--rise,10px))}to{opacity:1;transform:none}}
+@keyframes ent-settle{from{opacity:0;transform:translateY(var(--rise,8px)) scale(.965)}to{opacity:1;transform:none}}
+@keyframes ent-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ent-fade{from{opacity:0}to{opacity:1}}
+
+.anim{--e-expo:cubic-bezier(.16,1,.3,1); --e-quint:cubic-bezier(.22,1,.36,1);
+      --e-slow:cubic-bezier(.4,0,.2,1)}
+.ent-mask,.ent-line{display:block}
+.anim .ent-mask{overflow:hidden; padding-top:.18em; margin-top:-.18em}
+.anim .ent-line{transform:translateY(115%); will-change:transform}
+.anim .rule span{transform:scaleX(0)}
+.anim p.lede,.anim .cta a,.anim .sky{opacity:0}
+.anim .sky{will-change:opacity}
+
+.anim.play .sky{animation:ent-fade 1.6s var(--e-slow) .25s both}
+.anim.play .eyebrow .ent-line{animation:ent-reveal .75s var(--e-expo) .30s both}
+.anim.play h1.title .ent-line{animation:ent-reveal .95s var(--e-expo) .44s both}
+.anim.play .rule span{animation:ent-draw .65s var(--e-expo) .78s both}
+.anim.play p.lede{--rise:12px; animation:ent-rise .7s var(--e-quint) .86s both}
+.anim.play .cta a{--rise:8px; animation:ent-settle .7s var(--e-quint) 1.14s both}
+
+/* ============ LOGO (in-flow, same slot/size on every branch) ============ */
+.eyebrow .logo-mark{display:inline-block; height:calc(70 * var(--u)); width:auto}
+/* Home: logo moves into the title slot (via JS) at the title's own scale */
+h1.title .logo-mark{display:inline-block;
+  height:calc(160 * var(--u) * var(--title-scale, 1)); width:auto}
+
+/* ============ ORBIT NAV (side planetary panel) ============ */
+/* Same real-image-as-circle technique as the pre-rebuild .planet buttons —
+   see git history (commit 0f6d1d0) for the original two-slot version this
+   is ported from. Circles are the source PNGs, not a CSS mask/crop. */
+.hero-wrap{position:relative}
+.orbit-panel{position:absolute; top:calc(var(--nav-h) + 24px); right:0; z-index:60;
+  display:flex; flex-direction:column; align-items:flex-end}
+.orbit-nav{display:flex; flex-direction:column; align-items:flex-end; gap:16px; list-style:none; margin:0; padding:0}
+.orbit-nav li{margin:0; padding:0; display:flex; align-items:center; gap:14px}
+.orbit-label{font-family:var(--font-serif); font-weight:400; font-size:14px;
+  letter-spacing:.2em; line-height:1; color:#fff; white-space:nowrap; text-transform:uppercase}
+/* Desktop side panel always shows the full name ("E-Commerce", "AI
+   Integration"); the horizontal band below uses shorter forms instead so
+   every label fits on one line at the band's sizing — see .orbit-label-*
+   display swap in the max-width:1250px block. */
+.orbit-label-short{display:none}
+/* Circles bleed off the viewport edge, same as the hero planet renders */
+.orbit-planet{position:relative; z-index:1; flex:none; width:84px; padding:0; border:0;
+  background:none; -webkit-appearance:none; appearance:none; line-height:0; cursor:pointer;
+  transform:translateX(30%);
+  transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.orbit-planet img{display:block; width:100%; height:auto}
+/* Venus render's shadow reads bottom-left; mirror so it falls toward the
+   already-cropped right edge instead of sitting in the visible portion */
+.orbit-planet[data-planet="venus"] img{transform:scaleX(-1)}
+.orbit-planet:hover{transform:translateX(30%) scale(1.045)}
+.orbit-planet:active{transform:translateX(30%) scale(.99)}
+.orbit-planet:focus-visible{outline:2px solid var(--cyan); outline-offset:6px; border-radius:50%}
+.orbit-planet.is-active{outline:2px solid var(--cyan); outline-offset:4px; border-radius:50%}
+.orbit-planet.is-placeholder{aspect-ratio:1/1; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #2c4670, #0a1830); border:1px solid rgba(255,255,255,.25)}
+@media (prefers-reduced-motion:reduce){
+  .orbit-planet{transition:none} .orbit-planet:hover,.orbit-planet:active{transform:translateX(30%)}
+}
+@media (max-height:700px){
+  .orbit-panel{top:calc(var(--nav-h) + 10px)}
+  .orbit-nav{gap:9px}
+  .orbit-planet{width:64px}
+}
+/* Panel-switch breakpoint: below this, the vertical right-docked stack
+   becomes a compact horizontal band pinned above .copy instead — there's
+   no width where a full 5-item stacked column of circles+labels can share
+   the same row as centered hero copy without one dodging the other, and
+   dodging via a dynamic side-inset on .col visibly pushed the hero copy
+   off-center (rejected — .col must always be simply, symmetrically
+   centered). 1250px was picked with a margin over where centered title/
+   lede text naturally clears a right-docked 84px-circle/14px-label panel
+   at this content length (verified independently by real glyph-rect
+   measurement earlier in this file's history: clear by ~1180px; this
+   breakpoint adds ~70px of headroom on top of that, and the p.lede
+   max-width above removes the one branch-dependent variable — an
+   unconstrained long first line on Cortex/Venus — that could have eaten
+   into that margin). Below 1250px .col stays simply centered — see .col
+   above, no side inset of any kind. Placed after the max-height:700px
+   block above so its sizing always wins whenever both match. */
+@media (max-width:1250px){
+  /* Phone-tuned sizing (38px circle, 8.5px label) is the floor, held flat
+     up to 760px wide. Above that it scales up continuously with viewport
+     width, reaching ~1.65x (circle ~63px, label ~14px — close to the
+     vertical panel's own 84px/14px pairing) right at the 1250px edge of
+     this band, so a genuinely desktop-width browser window doesn't render
+     the same cramped size tuned for a ~390px phone. Circle width and label
+     font-size are both computed FROM this one factor rather than set as
+     independent fixed px, so a second, differently-sized tier isn't needed
+     to cover the range — one continuous formula instead of tier edges to
+     keep in sync. */
+  :root{--band-scale: clamp(1, calc(100vw / 760px), 1.65)}
+  .orbit-panel{top:calc(var(--nav-h) + 10px); left:0; right:0; align-items:center}
+  .orbit-nav{width:100%; flex-direction:row; flex-wrap:wrap; justify-content:center;
+    align-items:flex-start; gap:calc(10px * var(--band-scale)) calc(12px * var(--band-scale));
+    padding:0 calc(16px * var(--band-scale))}
+  .orbit-nav li{flex-direction:column; align-items:center;
+    gap:calc(4px * var(--band-scale)); width:calc(58px * var(--band-scale))}
+  /* Circle above its label in this layout (order:-1 beats the button's
+     default order:0, without touching DOM order — which the desktop side
+     panel above 1250px still relies on for its label-then-circle row). */
+  .orbit-planet{width:calc(38px * var(--band-scale)); transform:none; order:-1}
+  .orbit-planet:hover{transform:scale(1.045)}
+  .orbit-planet:active{transform:scale(.99)}
+  /* Band-only short forms ("E-Comm", "AI") replace the desktop panel's
+     full names so every label fits on one line at every width in this
+     range — verified by the same scale-invariance argument --band-scale
+     already relies on elsewhere: label and container both scale by the
+     identical factor, so if a label fits at the 390px floor it fits at
+     every larger size in the band too. "E-Comm" is the same length class
+     as "Social" (already confirmed single-line here); "AI" is shorter
+     than "Home". With no label ever wrapping, the fixed-height label box
+     from earlier rounds is no longer needed — a single-line label is the
+     same rendered height for all 5 items on its own, so the row stays
+     aligned without reserving extra space for a second line that no
+     longer happens. white-space stays at the base rule's nowrap (not
+     overridden here) as a hard guarantee against a wrap ever reappearing. */
+  .orbit-label{font-size:calc(8.5px * var(--band-scale)); letter-spacing:.03em}
+  .orbit-label-full{display:none}
+  .orbit-label-short{display:inline}
+  .copy{top:var(--orbit-clear, calc(76 * var(--u)))}
+}
