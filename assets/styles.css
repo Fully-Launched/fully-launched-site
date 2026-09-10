@@ -38,6 +38,31 @@ body[data-planet="venus"] .sky::before{transform:scaleX(-1)}
   display:block; opacity:0; transition:opacity .22s linear; z-index:1}
 .sky video.is-active{opacity:1}
 @media (prefers-reduced-motion:reduce){ .sky video{display:none} }
+/* Earth's and Mars's source footage brings the planet's horizon into frame
+   noticeably higher than Venus's — measured directly against the poster
+   stills (the same frame the video's own first paint uses): horizon sits
+   at ~55.3% down the frame for Earth, ~55.7% for Mars, vs ~61.4% for
+   Venus. Combined with the CTA button's fixed position in this
+   (non-phone) layout — .cta's own bottom edge sits at a fixed ~57% down
+   the same viewport-cover-mapped frame, from (597+66)/1163 in the hero's
+   design-height units — Earth/Mars leave the button sitting at or past
+   the horizon instead of clear above it, unlike Venus. Zooming in 11%
+   from a top-anchored origin leaves the top of frame (deep space) exactly
+   where it was and pushes the horizon down to ~61.4%, matching Venus,
+   without needing different footage — .stage's overflow:hidden clips the
+   extra height this adds below frame. Scoped to the non-phone hero layout
+   (mirrors the phone breakpoint's own condition, negated) because that's
+   where .cta actually holds this fixed position; phone's stacked flex
+   layout positions the CTA from the content above it instead, so this
+   specific conflict doesn't obviously apply there the same way — flagged,
+   not applied, pending an actual look at phone width. */
+@media (min-width:580px) and (min-height:621px){
+  body[data-planet="earth"] .sky::before, body[data-planet="earth"] .sky video,
+  body[data-planet="mars"] .sky::before, body[data-planet="mars"] .sky video{
+    transform-origin: 50% 0%;
+    transform: scale(1.11);
+  }
+}
 
 .ui{position:absolute; inset:0; z-index:3}
 
