@@ -380,8 +380,11 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
   box-shadow:0 10px 18px -8px rgba(255,255,255,.5), 0 0 26px rgba(255,255,255,.18),
              inset 0 0 0 2px rgba(255,255,255,.9)}
 .foot-meta{margin-top:48px; padding-top:28px; border-top:1px solid rgba(255,255,255,.08);
-  display:flex; justify-content:center; flex-wrap:wrap; gap:14px 28px; font-size:12.5px;
+  display:flex; flex-direction:column; align-items:center; gap:14px}
+.foot-row{display:flex; justify-content:center; flex-wrap:wrap; gap:10px 28px; font-size:12.5px;
   color:rgba(255,255,255,.45)}
+.foot-links a, .foot-social a{color:inherit; text-decoration:none}
+.foot-links a:hover, .foot-social a:hover{color:rgba(255,255,255,.8); text-decoration:underline}
 
 /* ============ ENTRANCE ANIMATION ============ */
 @keyframes ent-reveal{from{transform:translateY(115%)}to{transform:translateY(0)}}
@@ -458,14 +461,27 @@ h1.title .logo-mark{display:inline-block;
   .orbit-planet{width:56px}
   .orbit-label{font-size:11.5px; letter-spacing:.14em}
 }
-@media (max-width:480px){
-  .orbit-planet{width:44px}
-  .orbit-label{font-size:9.5px; letter-spacing:.08em}
-}
 @media (max-height:700px){
   .orbit-panel{top:calc(var(--nav-h) + 10px)}
   .orbit-nav{gap:9px}
   .orbit-planet{width:64px}
+}
+/* Phone: the vertical right-docked stack no longer has room next to the
+   full-width centered .copy text, so it becomes a compact horizontal band
+   pinned above .copy instead — separated by space, not layered on top.
+   Placed after the max-height:700px block above so its sizing always wins
+   on phone-width viewports, even short/landscape ones that match both. */
+@media (max-width:579px){
+  .orbit-panel{top:calc(var(--nav-h) + 10px); left:0; right:0; align-items:center}
+  .orbit-nav{width:100%; flex-direction:row; flex-wrap:wrap; justify-content:center;
+    align-items:flex-start; gap:10px 12px; padding:0 16px}
+  .orbit-nav li{flex-direction:column; align-items:center; gap:4px; width:58px}
+  .orbit-planet{width:38px; transform:none}
+  .orbit-planet:hover{transform:scale(1.045)}
+  .orbit-planet:active{transform:scale(.99)}
+  .orbit-label{font-size:8.5px; letter-spacing:.03em; line-height:1.25;
+    white-space:normal; text-align:center; overflow-wrap:break-word}
+  .copy{top:var(--orbit-clear, calc(76 * var(--u)))}
 }
 </style>
 </head>
@@ -759,9 +775,24 @@ h1.title .logo-mark{display:inline-block;
     <p>Book a free discovery call. No pitch, no pressure, just a real conversation about your product, your store, and where you want to sell it.</p>
     <a href="https://cal.com/luke-bothun" target="_blank" rel="noopener" class="mail-cta">Chat with us →</a>
     <div class="foot-meta">
-      <span>hello@fullylaunched.com</span>
-      <span>Responses within one business day</span>
-      <span>© FullyLaunched</span>
+      <div class="foot-row foot-info">
+        <span>hello@fullylaunched.com</span>
+        <span>Responses within one business day</span>
+        <span>Chicago, USA</span>
+        <span>Founded in 2026</span>
+        <span>© FullyLaunched</span>
+      </div>
+      <nav class="foot-row foot-links" id="foot-links" aria-label="Site branches">
+        <a href="#detail-earth" data-planet="earth">Home</a>
+        <a href="#detail-mars" data-planet="mars">Websites</a>
+        <a href="#detail-saturn" data-planet="saturn">Social</a>
+        <a href="#detail-venus" data-planet="venus">E-Commerce</a>
+        <a href="#detail-cortex" data-planet="cortex">AI Integration</a>
+      </nav>
+      <div class="foot-row foot-social">
+        <a href="https://instagram.com/fullylaunched" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://linkedin.com/company/fullylaunched" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
     </div>
   </div>
 </footer>
@@ -832,6 +863,10 @@ h1.title .logo-mark{display:inline-block;
     titleEl.style.setProperty('--title-scale', String(scale));
   }
   window.addEventListener('resize', fitTitle);
+  // hero-logo's intrinsic size isn't known until it loads, and it can still be
+  // loading when show('earth') first measures titleLine (offsetWidth reads 0,
+  // so the shrink math never engages) — re-measure once it's actually in.
+  if(heroLogo){ heroLogo.addEventListener('load', fitTitle); }
   var lede = document.querySelector('p.lede');
   var current = null;
 
@@ -919,8 +954,27 @@ h1.title .logo-mark{display:inline-block;
     updateOrbitActive();
   }
 
+  // On phone widths orbit-nav becomes a horizontal band above .copy (see the
+  // max-width:579px rules); its wrapped height varies with label text/width,
+  // so measure it instead of guessing a fixed offset for .copy to clear.
+  var heroWrap = document.querySelector('.hero-wrap');
+  var orbitPanel = document.querySelector('.orbit-panel');
+  function syncOrbitClearance(){
+    if(!heroWrap || !orbitPanel) return;
+    if(window.innerWidth > 579){
+      document.documentElement.style.removeProperty('--orbit-clear');
+      return;
+    }
+    var wrapTop = heroWrap.getBoundingClientRect().top;
+    var panelBottom = orbitPanel.getBoundingClientRect().bottom;
+    var clearance = Math.ceil(panelBottom - wrapTop) + 20;
+    document.documentElement.style.setProperty('--orbit-clear', clearance + 'px');
+  }
+  window.addEventListener('resize', syncOrbitClearance);
+
   buildOrbitNav();
   show('earth');
+  syncOrbitClearance();
 
   function goToDetail(planetKey){
     var target = document.getElementById(PLANETS[planetKey].detailId);
@@ -931,6 +985,16 @@ h1.title .logo-mark{display:inline-block;
     e.preventDefault();
     goToDetail(current);
   });
+
+  var footLinks = document.getElementById('foot-links');
+  if(footLinks){
+    footLinks.querySelectorAll('a[data-planet]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        goToDetail(a.dataset.planet);
+      });
+    });
+  }
 
   var html = document.documentElement;
   if(html.classList.contains('anim')){
