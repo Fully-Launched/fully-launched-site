@@ -133,6 +133,15 @@ h1.title{top:calc(268 * var(--u)); font-family:var(--font-serif); font-weight:40
   font-size:calc(112.4 * var(--u) * var(--title-scale, 1)); line-height:1; letter-spacing:calc(2 * var(--u));
   text-indent:calc(2 * var(--u)); color:#fff}
 h1.title .ent-line{display:inline-block}
+/* Home only: the 268u title offset is sized to clear the 70u-tall eyebrow
+   logo-mark that every OTHER branch shows above it (188.8u eyebrow top +
+   70u logo height + ~9u breathing room ≈ 268u — already tight, confirmed
+   by that math, so it's untouched for those branches). Home's eyebrow is
+   left empty (its logo lives in the title slot instead — see show()), so
+   that whole 268u-188.8u=79.2u is dead space with nothing in it. Pull
+   Home's title up to roughly the same ~11u gap the other branches already
+   have after their eyebrow content, instead of the ~79u gap it had before. */
+body[data-planet="earth"] h1.title{top:calc(200 * var(--u))}
 
 .rule{top:calc(405.5 * var(--u)); height:calc(5 * var(--u)); font-size:0; line-height:0;
   padding-right:calc(2 * var(--u))}
@@ -448,6 +457,11 @@ h1.title .logo-mark{display:inline-block;
 .orbit-nav li{margin:0; padding:0; display:flex; align-items:center; gap:14px}
 .orbit-label{font-family:var(--font-serif); font-weight:400; font-size:14px;
   letter-spacing:.2em; line-height:1; color:#fff; white-space:nowrap; text-transform:uppercase}
+/* Desktop side panel always shows the full name ("E-Commerce", "AI
+   Integration"); the horizontal band below uses shorter forms instead so
+   every label fits on one line at the band's sizing — see .orbit-label-*
+   display swap in the max-width:1250px block. */
+.orbit-label-short{display:none}
 /* Circles bleed off the viewport edge, same as the hero planet renders */
 .orbit-planet{position:relative; z-index:1; flex:none; width:84px; padding:0; border:0;
   background:none; -webkit-appearance:none; appearance:none; line-height:0; cursor:pointer;
@@ -493,14 +507,11 @@ h1.title .logo-mark{display:inline-block;
      width, reaching ~1.65x (circle ~63px, label ~14px — close to the
      vertical panel's own 84px/14px pairing) right at the 1250px edge of
      this band, so a genuinely desktop-width browser window doesn't render
-     the same cramped size tuned for a ~390px phone. Every other value in
-     this block is computed FROM this one factor (font-size, line-height,
-     the label's height reservation, gaps) rather than set as independent
-     fixed px — a second, differently-sized tier here would risk silently
-     dropping the fixed-height-label alignment fix below, since height and
-     line-height would need to be hand-kept in the same 2:1 ratio in each
-     tier separately. Deriving both from one variable keeps that ratio
-     exact at every width in the range, not just at chosen tier edges. */
+     the same cramped size tuned for a ~390px phone. Circle width and label
+     font-size are both computed FROM this one factor rather than set as
+     independent fixed px, so a second, differently-sized tier isn't needed
+     to cover the range — one continuous formula instead of tier edges to
+     keep in sync. */
   :root{--band-scale: clamp(1, calc(100vw / 760px), 1.65)}
   .orbit-panel{top:calc(var(--nav-h) + 10px); left:0; right:0; align-items:center}
   .orbit-nav{width:100%; flex-direction:row; flex-wrap:wrap; justify-content:center;
@@ -508,20 +519,28 @@ h1.title .logo-mark{display:inline-block;
     padding:0 calc(16px * var(--band-scale))}
   .orbit-nav li{flex-direction:column; align-items:center;
     gap:calc(4px * var(--band-scale)); width:calc(58px * var(--band-scale))}
-  .orbit-planet{width:calc(38px * var(--band-scale)); transform:none}
+  /* Circle above its label in this layout (order:-1 beats the button's
+     default order:0, without touching DOM order — which the desktop side
+     panel above 1250px still relies on for its label-then-circle row). */
+  .orbit-planet{width:calc(38px * var(--band-scale)); transform:none; order:-1}
   .orbit-planet:hover{transform:scale(1.045)}
   .orbit-planet:active{transform:scale(.99)}
-  /* Fixed 2-line-tall box, text vertically centered in it, so 1-line labels
-     (HOME) and 2-line labels (AI INTEGRATION) still leave the circle below
-     starting at the same y — otherwise a wrapped label pushes its circle
-     down relative to items whose label stayed on one line. height is
-     always exactly 2x line-height because both are the same base px times
-     --band-scale, so this holds at every width in the range, including
-     the wider end where the label sits at a bigger font-size. */
-  .orbit-label{font-size:calc(8.5px * var(--band-scale)); letter-spacing:.03em;
-    line-height:calc(11px * var(--band-scale)); height:calc(22px * var(--band-scale));
-    display:flex; align-items:center; justify-content:center;
-    white-space:normal; text-align:center; overflow-wrap:break-word}
+  /* Band-only short forms ("E-Comm", "AI") replace the desktop panel's
+     full names so every label fits on one line at every width in this
+     range — verified by the same scale-invariance argument --band-scale
+     already relies on elsewhere: label and container both scale by the
+     identical factor, so if a label fits at the 390px floor it fits at
+     every larger size in the band too. "E-Comm" is the same length class
+     as "Social" (already confirmed single-line here); "AI" is shorter
+     than "Home". With no label ever wrapping, the fixed-height label box
+     from earlier rounds is no longer needed — a single-line label is the
+     same rendered height for all 5 items on its own, so the row stays
+     aligned without reserving extra space for a second line that no
+     longer happens. white-space stays at the base rule's nowrap (not
+     overridden here) as a hard guarantee against a wrap ever reappearing. */
+  .orbit-label{font-size:calc(8.5px * var(--band-scale)); letter-spacing:.03em}
+  .orbit-label-full{display:none}
+  .orbit-label-short{display:inline}
   .copy{top:var(--orbit-clear, calc(76 * var(--u)))}
 }
 </style>
@@ -865,6 +884,7 @@ h1.title .logo-mark{display:inline-block;
     venus: {
       name: 'E-COMMERCE',
       label: 'E-Commerce',
+      shortLabel: 'E-Comm',
       type: 'video',
       clip: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_b211cd74-013b-4dd3-bfd0-64491d8696fa.mp4',
       still: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_cf55d1d8-7b59-4a64-80da-d72052ae974e.png',
@@ -881,6 +901,7 @@ h1.title .logo-mark{display:inline-block;
     cortex: {
       name: 'AI INTEGRATION',
       label: 'AI Integration',
+      shortLabel: 'AI',
       type: 'image',
       lede: 'We launch your business through AI integration and custom software.',
       detailId: 'detail-cortex'
@@ -927,7 +948,14 @@ h1.title .logo-mark{display:inline-block;
       var li = document.createElement('li');
       var label = document.createElement('span');
       label.className = 'orbit-label';
-      label.textContent = data.label;
+      var labelFull = document.createElement('span');
+      labelFull.className = 'orbit-label-full';
+      labelFull.textContent = data.label;
+      var labelShort = document.createElement('span');
+      labelShort.className = 'orbit-label-short';
+      labelShort.textContent = data.shortLabel || data.label;
+      label.appendChild(labelFull);
+      label.appendChild(labelShort);
       var btn = document.createElement('button');
       btn.className = 'orbit-planet';
       btn.type = 'button';
