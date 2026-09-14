@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Prata&family=Hanken+Grotesk:wght@400;500;600;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=3">
 <script>
 (function(){try{
   if(!window.matchMedia||!matchMedia('(prefers-reduced-motion: reduce)').matches){
@@ -22,7 +22,12 @@
 <main id="site-main">
 <div class="hero-wrap">
   <div class="stage">
-    <div class="sky"></div>
+    <div class="sky" style="--sky-bg:url(/assets/videos/planet-still.jpg)">
+      <video class="is-active" autoplay muted playsinline preload="auto"
+        src="/assets/videos/planet.mp4"
+        poster="/assets/videos/planet-still.jpg"
+        aria-hidden="true"></video>
+    </div>
     <div class="ui">
       <div class="copy">
         <div class="col eyebrow"><span class="ent-mask"><span class="ent-line"><img class="logo-mark" src="/assets/logo-white.png" alt="Fully Launched"></span></span></div>
@@ -45,7 +50,7 @@
       </li>
       <li>
         <span class="orbit-label"><span class="orbit-label-full">Social</span><span class="orbit-label-short">Social</span></span>
-        <a class="orbit-planet is-placeholder" data-planet="saturn" href="/social" aria-label="Social"></a>
+        <a class="orbit-planet" data-planet="saturn" href="/social" aria-label="Social"><img src="/assets/saturn-icon.png" alt=""></a>
       </li>
       <li>
         <span class="orbit-label"><span class="orbit-label-full">Websites</span><span class="orbit-label-short">Websites</span></span>
@@ -57,7 +62,7 @@
       </li>
       <li>
         <span class="orbit-label"><span class="orbit-label-full">AI Integration</span><span class="orbit-label-short">AI</span></span>
-        <a class="orbit-planet is-active is-placeholder" data-planet="cortex" href="/ai" aria-label="AI Integration" aria-current="page"></a>
+        <a class="orbit-planet is-active" data-planet="cortex" href="/ai" aria-label="AI Integration" aria-current="page"><img src="/assets/cortex-icon.png" alt=""></a>
       </li>
     </ul>
   </div>
@@ -112,6 +117,6 @@
   </div>
 </footer>
 
-<script src="/assets/site.js" defer></script>
+<script src="/assets/site.js?v=3" defer></script>
 </body>
 </html>

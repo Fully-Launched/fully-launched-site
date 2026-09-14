@@ -63,6 +63,29 @@ body[data-planet="venus"] .sky::before{transform:scaleX(-1)}
     transform: scale(1.11);
   }
 }
+/* Saturn's and Cortex's source footage has the same too-high horizon as
+   Earth/Mars originally did — measured the same way against their poster
+   stills: ~55.1% down for Saturn, ~55.3% for Cortex, vs the ~61.4% target.
+   Same top-anchored push-down fix, but scaleY only, not a uniform scale:
+   Saturn's rings already reach both left and right edges of the source
+   frame (measured: they span the full 2560px width at the ring plane), so
+   the horizontal component of a uniform scale(1.11) would crop into the
+   ring tips exactly where they're least able to spare it. Scaling only Y
+   reproduces the identical vertical repositioning math (a point at
+   fraction f down the frame still moves to f*1.11 down it) without
+   touching width at all, at the cost of a mild vertical stretch instead
+   of a horizontal crop — the explicit tradeoff asked for here. Applied to
+   both branches for consistency rather than using scale() for Cortex
+   alone (its content does have a little more side margin, but not enough
+   to be worth two different transform strategies for two planets fixed
+   together). */
+@media (min-width:580px) and (min-height:621px){
+  body[data-planet="saturn"] .sky::before, body[data-planet="saturn"] .sky video,
+  body[data-planet="cortex"] .sky::before, body[data-planet="cortex"] .sky video{
+    transform-origin: 50% 0%;
+    transform: scaleY(1.11);
+  }
+}
 
 .ui{position:absolute; inset:0; z-index:3}
 
@@ -269,7 +292,7 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
 .team-body2 p:last-child{margin-bottom:0}
 
 /* ============ CONTACT / FOOTER ============ */
-.contact{padding:100px 0 56px; text-align:center; background:#04101f;
+.contact{padding:100px 0 56px; text-align:center; background:#1B2B4B;
   border-top:1px solid rgba(255,255,255,.08); scroll-margin-top:var(--nav-h)}
 .contact .eyebrow2{justify-content:center}
 .contact h2{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
@@ -337,10 +360,45 @@ h1.title .logo-mark{display:inline-block;
   background:none; -webkit-appearance:none; appearance:none; line-height:0; cursor:pointer;
   transform:translateX(30%);
   transition:transform .45s cubic-bezier(.22,1,.36,1)}
-.orbit-planet img{display:block; width:100%; height:auto}
+/* Earth/Mars/Venus's icons are pre-cropped circular PNGs (already square,
+   transparent outside the circle), so this clip is a no-op for them.
+   Saturn/Cortex use a plain rectangular hero still instead of a dedicated
+   cropped icon, so aspect-ratio+object-fit+radius do the cropping here
+   rather than needing a separately-prepared circular asset. */
+.orbit-planet img{display:block; width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:50%}
 /* Venus render's shadow reads bottom-left; mirror so it falls toward the
    already-cropped right edge instead of sitting in the visible portion */
 .orbit-planet[data-planet="venus"] img{transform:scaleX(-1)}
+/* Saturn: the source render's ring span is much wider than the sphere
+   itself. Cropping it to a circle like the other 4 icons forces a choice
+   between cropping the rings off short or shrinking the whole render
+   until the rings fit — shrinking the sphere along with them. Instead the
+   image itself renders as a wider ellipse (border-radius:50% on a
+   non-square box forms an ellipse automatically) so the sphere stays the
+   same apparent size as Earth/Mars/Venus/Cortex while the rings extend
+   into the extra width.
+   Widening the *anchor* itself (an earlier version of this) grew the li's
+   flex-row footprint, which dragged the label along with it — the label
+   sits immediately left of the icon in flow, so a wider icon box pushed
+   the label 42px further left than the other 4 rows' shared right edge,
+   breaking label alignment. Instead the anchor stays the standard 84px
+   (so the label's position is identical across all 5 rows, derived only
+   from that constant width) and just the <img> inside is taken out of
+   flow — position:absolute, pinned to the anchor's right edge, rendered
+   at 150% width (126px) — so it can visually overflow left into the
+   label's row without the layout ever knowing it's there. The explicit
+   height replaces the one the anchor would otherwise get for free from
+   its (now out-of-flow) img content.
+   Desktop side-panel only — reset back to a plain in-flow circle in the
+   max-width:1250px band below, where each item has a fixed-width slot
+   with no room for an icon to overflow sideways without overlapping its
+   neighbor. */
+.orbit-planet[data-planet="saturn"]{height:84px}
+.orbit-planet[data-planet="saturn"] img{position:absolute; top:0; right:0; width:150%; aspect-ratio:3/2}
+.orbit-planet[data-planet="saturn"]:focus-visible{outline:none}
+.orbit-planet[data-planet="saturn"]:focus-visible img{outline:2px solid var(--cyan); outline-offset:6px; border-radius:50%}
+.orbit-planet[data-planet="saturn"].is-active{outline:none}
+.orbit-planet[data-planet="saturn"].is-active img{outline:2px solid var(--cyan); outline-offset:4px; border-radius:50%}
 .orbit-planet:hover{transform:translateX(30%) scale(1.045)}
 .orbit-planet:active{transform:translateX(30%) scale(.99)}
 .orbit-planet:focus-visible{outline:2px solid var(--cyan); outline-offset:6px; border-radius:50%}
@@ -354,6 +412,11 @@ h1.title .logo-mark{display:inline-block;
   .orbit-panel{top:calc(var(--nav-h) + 10px)}
   .orbit-nav{gap:9px}
   .orbit-planet{width:64px}
+  /* Anchor width comes from the generic rule above (64px, same as every
+     other planet) — the img's width:150% is relative, so it automatically
+     rescales to 96px here without a separate override. Only the height
+     (set in px, not derived) needs restating at this breakpoint's size. */
+  .orbit-planet[data-planet="saturn"]{height:64px}
 }
 /* Panel-switch breakpoint: below this, the vertical right-docked stack
    becomes a compact horizontal band pinned above .copy instead — there's
@@ -395,6 +458,15 @@ h1.title .logo-mark{display:inline-block;
   .orbit-planet{width:calc(38px * var(--band-scale)); transform:none; order:-1}
   .orbit-planet:hover{transform:scale(1.045)}
   .orbit-planet:active{transform:scale(.99)}
+  /* Saturn's wide-ellipse treatment is desktop-panel-only (see the base
+     rule above) — this band's li has a fixed width (58px * --band-scale)
+     sized for a circle, with no slack to grow sideways without overlapping
+     the neighboring wrapped item, so keep it circular here like the rest:
+     reset the anchor's fixed height and the img's out-of-flow overflow
+     treatment back to the same in-flow, self-sized circle every other
+     planet uses at this breakpoint. */
+  .orbit-planet[data-planet="saturn"]{height:auto}
+  .orbit-planet[data-planet="saturn"] img{position:static; width:100%; aspect-ratio:1/1}
   /* Band-only short forms ("E-Comm", "AI") replace the desktop panel's
      full names so every label fits on one line at every width in this
      range — verified by the same scale-invariance argument --band-scale

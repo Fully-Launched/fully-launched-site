@@ -1,0 +1,133 @@
+/* ============================================================
+   LIGHT THEME — new design system, currently scoped to the
+   E-Commerce page only (below its existing, untouched hero).
+   This is a deliberate departure from the rest of the site's
+   dark theme (assets/styles.css: #04101f bg, Prata + Hanken
+   Grotesk, --cyan:#C4AB82) — a preview of a site-wide redesign
+   coming later. Every rule here is scoped under .light-page so
+   nothing leaks onto the other 4 pages that still load this
+   same stylesheet-less dark theme; tokens are custom properties
+   on .light-page itself (not :root) for the same reason — this
+   file never touches styles.css or its :root tokens.
+   ============================================================ */
+
+.light-page{
+  --lp-navy:#1B2B4B;
+  --lp-tan:#C4A882;
+  --lp-bg:#FFFFFF;
+  --lp-section-bg:#F8F7F4;
+  --lp-font-body:'Jost', system-ui, -apple-system, sans-serif;
+  --lp-font-serif:'Libre Baskerville', Georgia, serif;
+  --lp-font-display:'Prata', Georgia, serif; /* plain line of the big headlines — same face as "E-COMMERCE" in the hero above, already loaded on this page */
+
+  position:relative;
+  background:var(--lp-bg);
+  color:var(--lp-navy);
+  font-family:var(--lp-font-body);
+  isolation:isolate; /* own stacking context, keeps the fixed grid canvas contained to this page's sections */
+}
+.light-page em{font-style:italic; color:var(--lp-tan); font-family:var(--lp-font-serif)}
+
+.lp-wrap{max-width:960px; margin:0 auto; padding:0 clamp(20px,4vw,48px)}
+
+/* ---- Grid-background sections (1: intro, 3: why fully launched) ---- */
+/* Canvas is absolutely positioned INSIDE its section (not fixed to the
+   viewport) — the section's position:relative makes it the containing
+   block, and its overflow:hidden clips the canvas to exactly that
+   section's box, so the grid can never paint over the hero above it or
+   any other section. Its size/cell math is driven by that container's
+   own getBoundingClientRect() in ecommerce.js, not window dimensions.
+   Neither section has an explicit height — sized by its own padding +
+   content like every other section here, and the canvas (inset:0)
+   fills whatever that natural height comes out to. Both sections use
+   the same .grid-canvas class; ecommerce.js instantiates one grid per
+   canvas found on the page. */
+.grid-intro, .grid-section{position:relative; overflow:hidden; text-align:center}
+.grid-intro{padding:140px 0 120px}
+.grid-section{padding:120px 0}
+.grid-canvas{position:absolute; inset:0; z-index:0; pointer-events:none}
+.grid-intro .lp-wrap, .grid-section .lp-wrap{position:relative; z-index:1}
+
+/* Shared big-headline treatment: plain first line in Prata (matching the
+   hero's title font above), italic tan second line in Libre Baskerville
+   (via .light-page em, unchanged). Used by Section 1's intro title and
+   Section 3's opening headline. */
+.lp-headline{font-family:var(--lp-font-display); font-weight:400; font-size:clamp(34px,5.5vw,58px);
+  line-height:1.15; margin:0 0 24px; letter-spacing:0}
+.lp-headline em{display:block}
+
+.grid-intro-sub{font-size:clamp(16px,2vw,19px); line-height:1.6; color:rgba(27,43,75,.7);
+  max-width:640px; margin:0 auto 36px}
+
+/* ---- Section 3, second half: "why fully launched" intro + 6 cards ---- */
+.why-intro{margin-top:88px}
+.lp-subhead{font-family:var(--lp-font-display); font-weight:400; font-size:clamp(26px,3.6vw,38px);
+  line-height:1.2; margin:0 0 20px}
+.lp-subhead em{display:inline}
+
+.why-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:48px; text-align:left}
+@media (max-width:760px){ .why-grid{grid-template-columns:1fr} }
+.why-card{background:var(--lp-section-bg); border:1px solid rgba(27,43,75,.1);
+  border-radius:16px; padding:28px}
+.why-card h4{font-family:var(--lp-font-body); font-weight:600; font-size:18px;
+  margin:0 0 10px; color:var(--lp-navy)}
+.why-card p{font-size:14.5px; line-height:1.6; color:rgba(27,43,75,.68); margin:0}
+
+.pill-row{display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
+.pill{display:inline-flex; align-items:center; font-size:13.5px; font-weight:500; letter-spacing:.02em;
+  padding:9px 18px; border-radius:999px; border:1px solid rgba(27,43,75,.16);
+  color:var(--lp-navy); background:rgba(196,168,130,.08)}
+
+/* ---- Section 2: problem + how we help (navy block within the light
+   theme — this is the new brand navy #1B2B4B as a section background,
+   not the old site's dark theme) ---- */
+.navy-block{background:var(--lp-navy); color:#fff; padding:120px 0; text-align:center}
+.eyebrow-lp{display:inline-block; font-size:12.5px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--lp-tan); margin-bottom:22px}
+.problem-copy{font-size:clamp(17px,1.9vw,20px); line-height:1.7; color:rgba(255,255,255,.82);
+  max-width:720px; margin:0 auto}
+
+/* ---- Section 4: how it works (overlapping sticky step cards) ----
+   .lp-headline is reused here with no overrides: .navy-block sets
+   color:#fff at the section level, so the headline's plain line inherits
+   white automatically, while its <em> line stays tan via the existing
+   .light-page em rule (an explicit color always wins over inheritance) —
+   same mechanism, no new headline variant needed. top/z-index per .step
+   are set inline by ecommerce.js so it scales with however many steps
+   exist; the !important below overrides those inline values only below
+   900px, where the cards stack normally instead of overlapping. */
+.steps-wrap{display:flex; flex-direction:column; gap:24px; margin-top:64px; text-align:left}
+.step{position:sticky; background:var(--lp-section-bg); color:var(--lp-navy);
+  border:1px solid rgba(27,43,75,.12); border-radius:24px; padding:36px;
+  min-height:220px; transition:transform .3s}
+.step-n{display:block; font-family:var(--lp-font-display); font-size:15px; font-weight:400;
+  letter-spacing:.04em; color:var(--lp-tan)}
+.step h4{font-family:var(--lp-font-body); font-weight:600; font-size:22px; margin:10px 0 10px}
+.step p{font-size:15px; line-height:1.6; color:rgba(27,43,75,.7); margin:0}
+@media (max-width:900px){
+  .step{position:relative; top:0 !important; z-index:auto !important}
+}
+
+/* ---- Section 5: closing CTA (third grid section — keeps the
+   grid/navy/grid/navy/grid rhythm, and avoids stacking two navy blocks
+   back to back right before the shared navy footer below). ---- */
+.cta-close .grid-intro-sub{margin-bottom:0}
+.cta-actions{margin-top:40px; display:flex; flex-direction:column; align-items:center; gap:16px}
+/* Same family as the dark theme's .mail-cta / hero .cta a: pill shape,
+   light gradient fill, dark text, soft glow + inset highlight — recolored
+   for this page's own tokens (tan-tinted gradient/highlight, navy text)
+   instead of inventing a new button style from scratch. */
+.cta-primary{display:inline-flex; align-items:center; justify-content:center;
+  padding:16px 34px; border-radius:999px;
+  background:linear-gradient(180deg,#ffffff 0%,#f5eee1 8%,#f8f2e8 72%,#ffffff 100%);
+  color:var(--lp-navy); font-family:var(--lp-font-body); font-weight:700; font-size:15px;
+  text-decoration:none;
+  box-shadow:0 10px 22px -10px rgba(27,43,75,.3), inset 0 0 0 1.5px rgba(196,168,130,.55)}
+.cta-primary:hover{box-shadow:0 14px 26px -10px rgba(27,43,75,.38), inset 0 0 0 1.5px rgba(196,168,130,.8)}
+/* Secondary stays a plain text link, not a second button shape — a ghost/
+   outline button here would still read as a competing CTA next to the
+   pill above. Tan, no underline at rest; underline only on hover as the
+   interactive affordance. */
+.cta-secondary{font-family:var(--lp-font-body); font-size:14px; font-weight:500;
+  color:var(--lp-tan); text-decoration:none}
+.cta-secondary:hover{text-decoration:underline; text-underline-offset:3px; color:var(--lp-navy)}
