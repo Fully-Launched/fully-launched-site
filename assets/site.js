@@ -45,6 +45,56 @@
   window.addEventListener('resize', syncOrbitClearance);
   syncOrbitClearance();
 
+  // Desktop-only label contrast. mix-blend-mode:difference was tried
+  // first (see styles.css) and reverted — tested directly and confirmed
+  // it can't cross the stacking context position:fixed unconditionally
+  // creates, so the label never actually blended against the real page
+  // content behind it; it only looked right over navy by coincidence
+  // (white blended against nothing still renders as plain white). This
+  // does the same job by checking what's behind each label's own
+  // position independently (not one check for the whole panel) — so as a
+  // navy/white section boundary scrolls through the middle of the stack,
+  // labels above and below it can show different colors at the same
+  // time, matching what's actually behind each one. Desktop side panel
+  // only — the mobile band already has its own solid/blurred backdrop
+  // (see the max-width:1250px .orbit-panel rule in styles.css), so its
+  // labels don't need this.
+  var LIGHT_SECTION_SELECTOR = '.grid-section, .grid-intro';
+  var orbitLabels = document.querySelectorAll('.orbit-label');
+  var orbitContrastRaf = null;
+  function syncOrbitContrast(){
+    if(!orbitLabels.length) return;
+    if(window.innerWidth <= 1250){
+      for(var i = 0; i < orbitLabels.length; i++){ orbitLabels[i].classList.remove('on-light'); }
+      return;
+    }
+    // Light-section rects are read once per frame here, then reused for
+    // every label's check below — not re-queried per label.
+    var lightSections = document.querySelectorAll(LIGHT_SECTION_SELECTOR);
+    var lightRects = [];
+    for(var i = 0; i < lightSections.length; i++){ lightRects.push(lightSections[i].getBoundingClientRect()); }
+    for(var i = 0; i < orbitLabels.length; i++){
+      var label = orbitLabels[i];
+      var r = label.getBoundingClientRect();
+      var probeY = r.top + r.height / 2;
+      var onLight = false;
+      for(var j = 0; j < lightRects.length; j++){
+        if(lightRects[j].top <= probeY && lightRects[j].bottom >= probeY){ onLight = true; break; }
+      }
+      label.classList.toggle('on-light', onLight);
+    }
+  }
+  function scheduleOrbitContrast(){
+    if(orbitContrastRaf) return;
+    orbitContrastRaf = requestAnimationFrame(function(){
+      orbitContrastRaf = null;
+      syncOrbitContrast();
+    });
+  }
+  window.addEventListener('scroll', scheduleOrbitContrast, { passive: true });
+  window.addEventListener('resize', scheduleOrbitContrast);
+  syncOrbitContrast();
+
   // Smooth hero video loop: the native `loop` attribute (removed from the
   // markup) hard-cuts back to frame 1, which reads as a jump. Instead,
   // fade the video out, seek to 0 while it's invisible, then fade back in

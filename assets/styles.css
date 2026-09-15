@@ -6,6 +6,10 @@
   --dh-px:calc(1163 * var(--u));
   --vshift:calc(max(0px, (100vh - var(--dh-px))) * .42);
   --ink:#ffffff; --cyan:#C4AB82;
+  /* The site's original dark navy — page background, old dark-theme
+     sections. Named so other stylesheets (e.g. light-theme.css) can match
+     it exactly by value without depending on this file's cascade. */
+  --navy:#04101f;
   --btn-ink:#071227;
   --font-serif:'Prata', Georgia, serif;
   --font-body:'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -21,7 +25,7 @@
 }
 html{height:100%; scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
-body{margin:0; min-height:100%; overflow-x:hidden; background:#04101f; color:var(--ink); font-family:var(--font-body);
+body{margin:0; min-height:100%; overflow-x:hidden; background:var(--navy); color:var(--ink); font-family:var(--font-body);
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   text-rendering:geometricPrecision}
 
@@ -291,24 +295,35 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
 .team-body2 p{font-size:13px; line-height:1.6; color:rgba(255,255,255,.7); margin:0 0 12px}
 .team-body2 p:last-child{margin-bottom:0}
 
-/* ============ CONTACT / FOOTER ============ */
-.contact{padding:100px 0 56px; text-align:center; background:#1B2B4B;
+/* ============ CONTACT / FOOTER ============
+   Minimal, Cin7-style: logo + copyright + Legal/Privacy links on the
+   left, a divider, icon-button social links on the right. Nothing else —
+   no headline, no CTA copy, no buttons beyond the social icons. The
+   "You've proven your product..." CTA that used to live here (and, for
+   one round, in a standalone .cta-banner section on E-Commerce) has been
+   removed outright — E-Commerce's own light-grid closing CTA covers the
+   same ground. */
+.contact{padding:48px 0; background:var(--navy);
   border-top:1px solid rgba(255,255,255,.08); scroll-margin-top:var(--nav-h)}
-.contact .eyebrow2{justify-content:center}
-.contact h2{font-family:var(--font-serif); font-weight:400; text-transform:uppercase;
-  font-size:clamp(28px,5vw,48px); margin:0 0 18px}
-.contact p{color:rgba(255,255,255,.7); max-width:520px; margin:0 auto 28px; font-size:15px; line-height:1.6}
-.mail-cta{display:inline-flex; align-items:center; justify-content:center; padding:16px 30px;
-  border-radius:33px; font-size:15px; font-weight:700; color:var(--btn-ink); text-decoration:none;
-  background:linear-gradient(180deg,#ffffff 0%,#d6e8f8 4%,#d9ecfe 72%,#ffffff 100%);
-  box-shadow:0 10px 18px -8px rgba(255,255,255,.5), 0 0 26px rgba(255,255,255,.18),
-             inset 0 0 0 2px rgba(255,255,255,.9)}
-.foot-meta{margin-top:48px; padding-top:28px; border-top:1px solid rgba(255,255,255,.08);
-  display:flex; flex-direction:column; align-items:center; gap:14px}
-.foot-row{display:flex; justify-content:center; flex-wrap:wrap; gap:10px 28px; font-size:12.5px;
-  color:rgba(255,255,255,.45)}
-.foot-links a, .foot-social a{color:inherit; text-decoration:none}
-.foot-links a:hover, .foot-social a:hover{color:rgba(255,255,255,.8); text-decoration:underline}
+.foot-bottom{display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:24px}
+.foot-brand{display:flex; align-items:center; gap:20px; flex-wrap:wrap}
+.foot-logo{height:22px; width:auto; display:block}
+.foot-copyright, .foot-tagline{font-size:13px; color:rgba(255,255,255,.5)}
+.foot-legal{display:flex; gap:20px}
+.foot-legal a{font-size:13px; color:rgba(255,255,255,.5); text-decoration:none}
+.foot-legal a:hover{color:#fff; text-decoration:underline}
+.foot-divider{width:1px; height:24px; background:rgba(255,255,255,.15)}
+.foot-social-icons{display:flex; gap:12px}
+.social-icon-btn{display:inline-flex; align-items:center; justify-content:center;
+  width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.7); transition:border-color .2s, color .2s}
+.social-icon-btn:hover{border-color:rgba(255,255,255,.6); color:#fff}
+.social-icon-btn svg{width:16px; height:16px; fill:currentColor; display:block}
+@media (max-width:560px){
+  .foot-bottom{justify-content:center; text-align:center}
+  .foot-divider{display:none}
+}
 
 /* ============ ENTRANCE ANIMATION ============ */
 @keyframes ent-reveal{from{transform:translateY(115%)}to{transform:translateY(0)}}
@@ -344,12 +359,46 @@ h1.title .logo-mark{display:inline-block;
    see git history (commit 0f6d1d0) for the original two-slot version this
    is ported from. Circles are the source PNGs, not a CSS mask/crop. */
 .hero-wrap{position:relative}
-.orbit-panel{position:absolute; top:calc(var(--nav-h) + 24px); right:0; z-index:60;
+/* Fixed (not absolute) so the panel stays visible for the entire page
+   scroll on every page, not just while the hero itself is in view —
+   position:fixed is viewport-relative, so top/right below pin it to the
+   same on-screen spot regardless of scroll position. z-index:60 is
+   already comfortably above everything else on the page (nothing else
+   here goes past z-index:3), so it stays on top at every scroll depth
+   without needing a bump. */
+.orbit-panel{position:fixed; top:calc(var(--nav-h) + 24px); right:0; z-index:60;
   display:flex; flex-direction:column; align-items:flex-end}
 .orbit-nav{display:flex; flex-direction:column; align-items:flex-end; gap:16px; list-style:none; margin:0; padding:0}
 .orbit-nav li{margin:0; padding:0; display:flex; align-items:center; gap:14px}
+/* mix-blend-mode:difference on this label was tried (and reverted) as a
+   fix for its white text disappearing over white .grid-section content
+   now that the panel is position:fixed and persists over the whole page.
+   Tested directly with a minimal, isolated repro (no page complexity):
+   blend-mode against a white background works correctly (renders black,
+   as expected) in a flat DOM, but stops working the moment the blended
+   element sits inside ANY ancestor with position:fixed OR an explicit
+   z-index — both create a new stacking context per spec, and
+   mix-blend-mode can only blend against content within its own stacking
+   context. .orbit-panel needs both (fixed to stay pinned through scroll,
+   z-index:60 to stay above page content), so this is a hard structural
+   conflict, not a tunable bug — confirmed by testing, not assumed. See
+   chat history for the repro and reasoning if revisiting this. */
 .orbit-label{font-family:var(--font-serif); font-weight:400; font-size:14px;
-  letter-spacing:.2em; line-height:1; color:#fff; white-space:nowrap; text-transform:uppercase}
+  letter-spacing:.2em; line-height:1; color:#fff; white-space:nowrap; text-transform:uppercase;
+  transition:color .2s linear}
+/* .on-light is toggled per-label (not once for the whole panel) by
+   site.js (syncOrbitContrast), based on whether a light .grid-section/
+   .grid-intro is currently behind THAT label's own vertical position —
+   see the JS comment for why this replaced mix-blend-mode. This is what
+   lets labels above and below a scrolling navy/white boundary show
+   different colors at the same time instead of the whole stack switching
+   together. Desktop-only in practice: the JS removes this class from
+   every label below 1250px, but the min-width guard here is
+   belt-and-suspenders so it can never visually apply in the mobile band
+   even if that toggle raced. */
+@media (min-width:1251px){
+  .orbit-label.on-light{color:var(--navy)}
+}
 /* Desktop side panel always shows the full name ("E-Commerce", "AI
    Integration"); the horizontal band below uses shorter forms instead so
    every label fits on one line at the band's sizing — see .orbit-label-*
@@ -392,13 +441,19 @@ h1.title .logo-mark{display:inline-block;
    Desktop side-panel only — reset back to a plain in-flow circle in the
    max-width:1250px band below, where each item has a fixed-width slot
    with no room for an icon to overflow sideways without overlapping its
-   neighbor. */
+   neighbor.
+   Active/focus rings are deliberately NOT overridden here — the generic
+   .orbit-planet.is-active / :focus-visible rules below already draw the
+   ring on the *anchor* (still a plain 84px square, per above), giving
+   Saturn the same clean circular ring as the other 4 planets, sized to
+   the planet body rather than stretched to the wider image. An earlier
+   version moved the ring onto the <img> instead so it would enclose the
+   full wide ellipse — that's what looked inconsistent with the other 4
+   circles, and rings extending past a circular active-state boundary is
+   already the expected look (it's exactly what the default, non-active
+   state already does). */
 .orbit-planet[data-planet="saturn"]{height:84px}
 .orbit-planet[data-planet="saturn"] img{position:absolute; top:0; right:0; width:150%; aspect-ratio:3/2}
-.orbit-planet[data-planet="saturn"]:focus-visible{outline:none}
-.orbit-planet[data-planet="saturn"]:focus-visible img{outline:2px solid var(--cyan); outline-offset:6px; border-radius:50%}
-.orbit-planet[data-planet="saturn"].is-active{outline:none}
-.orbit-planet[data-planet="saturn"].is-active img{outline:2px solid var(--cyan); outline-offset:4px; border-radius:50%}
 .orbit-planet:hover{transform:translateX(30%) scale(1.045)}
 .orbit-planet:active{transform:translateX(30%) scale(.99)}
 .orbit-planet:focus-visible{outline:2px solid var(--cyan); outline-offset:6px; border-radius:50%}
@@ -446,7 +501,27 @@ h1.title .logo-mark{display:inline-block;
      to cover the range — one continuous formula instead of tier edges to
      keep in sync. */
   :root{--band-scale: clamp(1, calc(100vw / 760px), 1.65)}
-  .orbit-panel{top:calc(var(--nav-h) + 10px); left:0; right:0; align-items:center}
+  /* This band is now fixed to the viewport top (see the base .orbit-panel
+     rule), so page content scrolls directly underneath it rather than
+     past it once. Give it its own backdrop so that scrolling text/planet
+     icons don't read as content being sliced by a hard edge:
+     - background: a navy tint (matches --navy) so anything showing
+       through the blur still reads as "under a dark panel", not just
+       blurry.
+     - backdrop-filter: blurs whatever's scrolling underneath.
+     - mask-image: fades the blur+tint out toward the bottom of the box,
+       rather than either effect stopping on a hard line — the box is
+       taller than its own nav content (padding-bottom) specifically to
+       leave room for this fade to happen gradually instead of clipping
+       right at the icons' bottom edge. Desktop's vertical side panel
+       intentionally skips all of this — it doesn't sit over scrolling
+       content the same way a full-width top band does. */
+  .orbit-panel{top:0; left:0; right:0; align-items:center;
+    padding:calc(var(--nav-h) + 10px) 0 48px;
+    background:linear-gradient(to bottom, rgba(4,16,31,.88) 0%, rgba(4,16,31,.88) 62%, rgba(4,16,31,0) 100%);
+    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%);
+    mask-image:linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%)}
   .orbit-nav{width:100%; flex-direction:row; flex-wrap:wrap; justify-content:center;
     align-items:flex-start; gap:calc(10px * var(--band-scale)) calc(12px * var(--band-scale));
     padding:0 calc(16px * var(--band-scale))}
