@@ -186,6 +186,32 @@
     });
   }
 
+  // Mobile autoplay fallback: the markup already sets muted, playsinline,
+  // and autoplay directly (iOS Safari requires all three together), which
+  // normally starts playback with no JS involved at all. Some mobile
+  // browsers still land on a paused first frame with a play button
+  // instead, in particular when the video hasn't buffered enough yet at
+  // the moment autoplay is first attempted. This explicitly (re)requests
+  // playback at a few points that reliably fire on mobile, on top of (not
+  // instead of) the native attributes, without touching the crossfade
+  // loop above.
+  if(!reduceMotion){
+    document.querySelectorAll('.sky video').forEach(function(video){
+      video.muted = true;
+      var tryPlay = function(){
+        if(!video.paused) return;
+        var p = video.play();
+        if(p && p.catch){ p.catch(function(){}); }
+      };
+      tryPlay();
+      video.addEventListener('loadedmetadata', tryPlay);
+      video.addEventListener('canplay', tryPlay);
+      document.addEventListener('visibilitychange', function(){
+        if(!document.hidden){ tryPlay(); }
+      });
+    });
+  }
+
   // Entrance animation: play once fonts are ready (or after a timeout
   // guard), then drop the animation classes so nothing keeps will-change
   // layers around after it's done.

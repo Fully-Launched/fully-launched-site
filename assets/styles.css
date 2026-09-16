@@ -101,29 +101,34 @@ body[data-planet="venus"] .sky::before{transform:scaleX(-1)}
 /* HERO COPY */
 .eyebrow{top:calc(188.8 * var(--u)); font-size:calc(30.45 * var(--u)); font-weight:500;
   line-height:1; letter-spacing:calc(4 * var(--u)); text-indent:calc(4 * var(--u)); color:#fff}
-h1.title{top:calc(268 * var(--u)); font-family:var(--font-serif); font-weight:400;
+h1.title{top:calc(250 * var(--u)); font-family:var(--font-serif); font-weight:400;
   font-size:calc(112.4 * var(--u) * var(--title-scale, 1)); line-height:1; letter-spacing:calc(2 * var(--u));
   text-indent:calc(2 * var(--u)); color:#fff}
 h1.title .ent-line{display:inline-block}
-/* Home only: the 268u title offset is sized to clear the 70u-tall eyebrow
-   logo-mark that every OTHER branch shows above it (188.8u eyebrow top +
-   70u logo height + ~9u breathing room ≈ 268u — already tight, confirmed
-   by that math, so it's untouched for those branches). Home's eyebrow is
-   left empty (its logo lives in the title slot instead — see index.html),
-   so that whole 268u-188.8u=79.2u is dead space with nothing in it. Pull
-   Home's title up to roughly the same ~11u gap the other branches already
-   have after their eyebrow content, instead of the ~79u gap it had before. */
-body[data-planet="earth"] h1.title{top:calc(200 * var(--u))}
+/* Home only: the 268u title offset (now 250u, see the desktop-hero
+   nudge-up below) is sized to clear the 70u-tall eyebrow logo-mark that
+   every OTHER branch shows above it (188.8u eyebrow top + 70u logo
+   height + ~9u breathing room ≈ 268u — already tight, confirmed by that
+   math, so it's untouched for those branches). Home's eyebrow is left
+   empty (its logo lives in the title slot instead — see index.html), so
+   that whole 268u-188.8u=79.2u is dead space with nothing in it. Pull
+   Home's title up to roughly the same ~11u gap the other branches
+   already have after their eyebrow content, instead of the ~79u gap it
+   had before. Shifted up the same 18u as the general nudge above. */
+body[data-planet="earth"] h1.title{top:calc(182 * var(--u))}
 
-.rule{top:calc(405.5 * var(--u)); height:calc(5 * var(--u)); font-size:0; line-height:0;
-  padding-right:calc(2 * var(--u))}
-.rule span{display:inline-block; vertical-align:top; width:calc(100 * var(--u));
-  height:100%; border-radius:calc(2.5 * var(--u)); background:var(--cyan)}
 p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:400;
   line-height:calc(38 * var(--u)); color:rgba(255,255,255,.95)}
 
 /* CTA ROW */
-.cta{top:calc(597 * var(--u)); height:calc(66 * var(--u)); isolation:isolate}
+/* top was 597u (bottom edge at (597+66)/1163 ≈ 57% down frame); moved up
+   to clear the ~55% horizon Saturn/Cortex/Earth/Mars sit at before the
+   1.11 zoom-in fix below applies (min-height:621px gate) — at any width
+   above the orbit-nav's 1250px panel-switch breakpoint that gate is
+   already satisfied by ordinary window heights, but this keeps the
+   button clear of the horizon even in the unscaled case instead of
+   depending on that fix always being active. */
+.cta{top:calc(540 * var(--u)); height:calc(66 * var(--u)); isolation:isolate}
 .cta a{display:inline-flex; align-items:center; justify-content:center;
   width:calc(216 * var(--u)); height:calc(66 * var(--u)); border-radius:calc(33 * var(--u));
   font-size:calc(17 * var(--u)); font-weight:700; letter-spacing:0; text-indent:0;
@@ -182,8 +187,6 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
   .col{position:static; width:100%; right:auto}
   .eyebrow{font-size:calc(20 * var(--u)); letter-spacing:calc(5 * var(--u)); text-indent:calc(5 * var(--u))}
   h1.title{font-size:calc(86 * var(--u) * var(--title-scale, 1)); margin-top:calc(15 * var(--u))}
-  .rule{margin-top:calc(20 * var(--u)); height:calc(5 * var(--u)); padding-right:0}
-  .rule span{width:calc(84 * var(--u))}
   p.lede{margin-top:calc(19 * var(--u)); font-size:calc(20 * var(--u));
     line-height:calc(32 * var(--u)); max-width:calc(400 * var(--u)); text-wrap:balance}
   p.lede br{display:none}
@@ -197,7 +200,6 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
     --dh-px:calc(560 * var(--u)); --vshift:0px}
   .copy{padding-top:calc(26 * var(--u))}
   h1.title{font-size:calc(64 * var(--u) * var(--title-scale, 1)); margin-top:calc(8 * var(--u))}
-  .rule{margin-top:calc(12 * var(--u))}
   p.lede{margin-top:calc(12 * var(--u))}
   .cta{margin-top:calc(20 * var(--u))}
 }
@@ -329,7 +331,6 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
 @keyframes ent-reveal{from{transform:translateY(115%)}to{transform:translateY(0)}}
 @keyframes ent-rise{from{opacity:0;transform:translateY(var(--rise,10px))}to{opacity:1;transform:none}}
 @keyframes ent-settle{from{opacity:0;transform:translateY(var(--rise,8px)) scale(.965)}to{opacity:1;transform:none}}
-@keyframes ent-draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes ent-fade{from{opacity:0}to{opacity:1}}
 
 .anim{--e-expo:cubic-bezier(.16,1,.3,1); --e-quint:cubic-bezier(.22,1,.36,1);
@@ -337,14 +338,12 @@ p.lede{top:calc(433.2 * var(--u)); font-size:calc(24 * var(--u)); font-weight:40
 .ent-mask,.ent-line{display:block}
 .anim .ent-mask{overflow:hidden; padding-top:.18em; margin-top:-.18em}
 .anim .ent-line{transform:translateY(115%); will-change:transform}
-.anim .rule span{transform:scaleX(0)}
 .anim p.lede,.anim .cta a,.anim .sky{opacity:0}
 .anim .sky{will-change:opacity}
 
 .anim.play .sky{animation:ent-fade 1.6s var(--e-slow) .25s both}
 .anim.play .eyebrow .ent-line{animation:ent-reveal .75s var(--e-expo) .30s both}
 .anim.play h1.title .ent-line{animation:ent-reveal .95s var(--e-expo) .44s both}
-.anim.play .rule span{animation:ent-draw .65s var(--e-expo) .78s both}
 .anim.play p.lede{--rise:12px; animation:ent-rise .7s var(--e-quint) .86s both}
 .anim.play .cta a{--rise:8px; animation:ent-settle .7s var(--e-quint) 1.14s both}
 
@@ -383,9 +382,15 @@ h1.title .logo-mark{display:inline-block;
    z-index:60 to stay above page content), so this is a hard structural
    conflict, not a tunable bug — confirmed by testing, not assumed. See
    chat history for the repro and reasoning if revisiting this. */
+/* Now an <a> (see index.html etc.) instead of a plain <span>, pointing at
+   the same href as the sibling .orbit-planet icon anchor, tabindex:-1 +
+   aria-hidden so it doesn't duplicate a stop in the tab order or the
+   accessibility tree (the icon anchor already has the real aria-label
+   and, where active, aria-current) — it exists purely so a mouse/touch
+   click anywhere on the label text also navigates, not just the icon. */
 .orbit-label{font-family:var(--font-serif); font-weight:400; font-size:14px;
   letter-spacing:.2em; line-height:1; color:#fff; white-space:nowrap; text-transform:uppercase;
-  transition:color .2s linear}
+  text-decoration:none; transition:color .2s linear}
 /* .on-light is toggled per-label (not once for the whole panel) by
    site.js (syncOrbitContrast), based on whether a light .grid-section/
    .grid-intro is currently behind THAT label's own vertical position —
@@ -517,7 +522,7 @@ h1.title .logo-mark{display:inline-block;
        intentionally skips all of this — it doesn't sit over scrolling
        content the same way a full-width top band does. */
   .orbit-panel{top:0; left:0; right:0; align-items:center;
-    padding:calc(var(--nav-h) + 10px) 0 48px;
+    padding:calc(var(--nav-h) - 24px) 0 28px;
     background:linear-gradient(to bottom, rgba(4,16,31,.88) 0%, rgba(4,16,31,.88) 62%, rgba(4,16,31,0) 100%);
     -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
     -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%);
