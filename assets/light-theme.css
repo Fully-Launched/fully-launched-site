@@ -222,11 +222,49 @@ a.why-card:hover{border-color:rgba(196,168,130,.55); transform:translateY(-2px)}
   text-align:center; padding:20px}
 .gallery-card span{font-size:13px; font-weight:500; letter-spacing:.02em; color:rgba(27,43,75,.45)}
 
-/* ---- Social page, Section 6: "who you'll work with" + closing CTA
-   combined into one section so the page ends on white/grid (see the
-   even-section-count rule in CLAUDE.md) instead of adding a 7th,
-   navy-ending section. .solo-card-wrap centers a single .team-card-lp
-   at its natural card width since .why-grid's column layout is built
-   for multiple cards, not one. */
-.solo-card-wrap{max-width:280px; margin:0 auto 56px}
+/* ---- "Who you'll work with" sections (Social/Websites/E-Commerce/AI
+   Integration). .solo-card-wrap centers a single .team-card-lp since
+   .why-grid's column layout is built for multiple cards, not one; widened
+   from an earlier, narrower stacked-card version to fit the row layout
+   below. .cta-divider is unused now that these sections no longer share
+   a slot with the closing CTA (each has its own section) but is left
+   defined in case it's needed again. */
+.solo-card-wrap{max-width:640px; margin:0 auto}
 .cta-divider{height:1px; background:rgba(27,43,75,.12); max-width:640px; margin:0 auto 56px}
+
+/* Horizontal (photo left, bio right) variant of .team-card-lp — a
+   modifier, not a change to .team-card-lp itself, since Home's "Meet the
+   team" grid still uses the original stacked/vertical shape. Paired with
+   .who-block below to keep these sections noticeably shorter overall
+   than the old stacked layout (tall photo + text below it), not just a
+   wider row at the same section height. align-items:center (not
+   stretch) so the photo keeps its own aspect-ratio instead of being
+   force-stretched to match the text column's height. */
+.team-card-lp.team-card-row{display:flex; align-items:center; text-align:left}
+.team-card-lp.team-card-row .team-photo-lp{flex:0 0 220px; width:220px}
+.team-card-lp.team-card-row .team-body-lp{flex:1; padding:24px 28px}
+.who-tenure{margin:8px 0 0; font-size:12.5px; color:rgba(27,43,75,.55)}
+@media (max-width:760px){
+  /* Same 760px collapse .why-grid already uses for its own single-card
+     fallback — the closest existing "multi-column to stacked" breakpoint
+     on the site to match, since no other true side-by-side (non-grid)
+     layout existed here before this one. */
+  .team-card-lp.team-card-row{flex-direction:column}
+  .team-card-lp.team-card-row .team-photo-lp{width:100%; flex:none}
+}
+.navy-block.who-block{padding:72px 0}
+
+/* .note-row/.btn-ghost (styles.css) were designed for the old dark-theme
+   navy sections: white text and a near-white border, invisible against
+   this section's own white background. Every current usage (Social/
+   Websites/AI Integration's "How we fix it") sits on .grid-section, not
+   navy, so it needs a light-on-white variant instead — this is the
+   actual source of the oversized-looking gap reported under those
+   pages' tier cards: not extra padding, invisible content still taking
+   up its normal space. Colors reused from the same navy/opacity values
+   already used elsewhere on this card system (.why-card p etc.) rather
+   than invented fresh. */
+.grid-section .note-row{border-top-color:rgba(27,43,75,.12)}
+.grid-section .note-row p{color:rgba(27,43,75,.68)}
+.grid-section .btn-ghost{color:var(--lp-navy); border-color:rgba(27,43,75,.25)}
+.grid-section .btn-ghost:hover{border-color:var(--lp-navy)}
