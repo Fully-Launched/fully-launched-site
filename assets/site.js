@@ -239,4 +239,41 @@
       playEntrance();
     }
   }
+
+  // Section headline reveal: every .lp-headline (Home, E-Commerce today;
+  // Websites/Social/AI Integration as those get built out, no extra
+  // wiring needed since this just queries the class) gets the same
+  // masked slide-up reveal as the hero title, but triggered the first
+  // time it scrolls into view rather than on page load — see the CSS
+  // comment (.headline-mask/.headline-line, styles.css) for why this
+  // can't reuse the hero's own <html>.anim/.play toggle. Skipped
+  // entirely under reduced motion or without IntersectionObserver
+  // support, same as the hero entrance above — headlines just render
+  // normally, statically, with no wrapper markup added.
+  var sectionHeadlines = document.querySelectorAll('.lp-headline');
+  if(sectionHeadlines.length && !reduceMotion && 'IntersectionObserver' in window){
+    var headlineObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(!entry.isIntersecting) return;
+        headlineObserver.unobserve(entry.target);
+        var line = entry.target._headlineLine;
+        line.classList.add('in-view');
+        line.addEventListener('animationend', function(){
+          line.style.willChange = 'auto';
+        }, { once: true });
+      });
+    }, { threshold: 0.2 });
+
+    sectionHeadlines.forEach(function(headline){
+      var line = document.createElement('span');
+      line.className = 'headline-line';
+      while(headline.firstChild){ line.appendChild(headline.firstChild); }
+      var mask = document.createElement('span');
+      mask.className = 'headline-mask';
+      mask.appendChild(line);
+      headline.appendChild(mask);
+      headline._headlineLine = line;
+      headlineObserver.observe(headline);
+    });
+  }
 })();
